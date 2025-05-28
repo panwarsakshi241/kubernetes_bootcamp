@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  type: NodePort  # It can be wither NodePort, ClusterIP OR LoadBalance
+  ports:
+    - port: 80  #port of the service
+      targetPort: 80  #port of the pod
+      nodePort: 30008 #port of the node
+  selector:
+    app: myapp
+    type: front-end
