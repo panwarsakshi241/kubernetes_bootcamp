@@ -2,10 +2,45 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: myapp-pod
+  namespace: dev
   labels:
     app: myapp
     type: front-end
 spec:
+  # Add Security context to the Pod
+  securityContext:
+    runAsUser: 1000
   containers:
     - name: nginx
       image: nginx
+      ports:
+        - containerPort: 8080
+      #Add security context at the container level
+      securityContext:
+        runAsUser: 1000
+      #To add capabilities
+        capabilities:
+          add:
+            - "MAC_ADMIN"
+      envFrom:
+        - configMapRef:
+            name: config
+#Inject the secret into Pod which we created using the secrets-data.yaml file.
+#This is an example of injecting secret as Env variables.
+        - secretRef:        
+            name: app-secret
+# -------OTHER WAYS TO INJECT SECRETS INTO PODS-----------
+# 2. AS SINGLE ENVIRONMENT VARIABLES
+# env: 
+    # - name: DB_Password
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: app-secret
+    #       key: DB_PASSWORD
+#3. ---------OTHER WAY IS INJECT THE SECRET AS WHOLE AS A FILE IN VOLUME
+#volumes:
+#  - name: app-secret-volume
+#    secret:
+#      secretName: app-secret
+
+            
